@@ -11,6 +11,8 @@ public class BunnyMark : MonoBehaviour {
 	int result = 0;
 	// storing the time difference between frames
 	float deltaTime = 0.0f;
+	// value of increasing
+	int increase = 100;
 
 	// Use this for initialization
 	void Start () {
@@ -21,12 +23,18 @@ public class BunnyMark : MonoBehaviour {
 	}
 
 	// it is executed when user click in the canvas area
-	// add 25 moving rabbits to the scene
+	// add the next moving rabbits to the scene
 	public void addRabbits(){
+		// if computer: add 100, if smartphone: add 10
+		#if UNITY_STANDALONE
+			increase = 100;
+		#elif UNITY_ANDROID
+			increase = 10;
+		#endif
 		// update the result value
-		result += 25;
-		// create 25 rabbits from the "rabbit" prefab
-		for (int i = 0; i < 25; i++) {
+		result += increase;
+		// create the next rabbits from the "rabbit" prefab
+		for (int i = 0; i < increase; i++) {
 			Instantiate (rabbit);
 		}
 		// update text of result on the GUI

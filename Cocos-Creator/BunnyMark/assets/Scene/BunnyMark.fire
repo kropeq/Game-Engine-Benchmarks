@@ -403,7 +403,7 @@
       "width": 800,
       "height": 600
     },
-    "_fitWidth": false,
+    "_fitWidth": true,
     "_fitHeight": true
   }
 ]

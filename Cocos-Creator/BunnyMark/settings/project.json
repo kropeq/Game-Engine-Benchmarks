@@ -4,8 +4,8 @@
       true
     ]
   ],
-  "design-resolution-height": 600,
-  "design-resolution-width": 800,
+  "design-resolution-height": 640,
+  "design-resolution-width": 960,
   "excluded-modules": [
     "StudioComponent",
     "Chipmunk",
@@ -37,5 +37,5 @@
   },
   "start-scene": "current",
   "use-customize-simulator": true,
-  "use-project-simulator-setting": true
+  "use-project-simulator-setting": false
 }

@@ -18,13 +18,13 @@ cc.Class({
         // moving this sprite
         this.node.y -= 5*this.direction;
         // if it goes out of the screen
-        if(this.node.y < 10 ){
+        if(this.node.y < 20 ){
             this.direction = -1;
-            this.node.y = 10;
+            this.node.y = 20;
         }
-        if(this.node.y > 590 ){
+        if(this.node.y > 580 ){
             this.direction = 1;
-            this.node.y = 590;
+            this.node.y = 580;
         }
     },
 });

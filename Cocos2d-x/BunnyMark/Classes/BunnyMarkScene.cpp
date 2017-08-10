@@ -1,5 +1,6 @@
 #include "BunnyMarkScene.h"
 #include "SimpleAudioEngine.h"
+#include <list>
 
 USING_NS_CC;
 
@@ -61,6 +62,8 @@ bool BunnyMark::init()
 	minY = (int)rabbit_height + 1;
 	maxY = (int)(visibleSize.height - rabbit_height) - 1;
 	
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+	increase = 50;
 	// setting CLICK listener
 	auto _mouseListener = EventListenerMouse::create();
 	_mouseListener->onMouseDown = [=](cocos2d::Event* event) {
@@ -69,10 +72,28 @@ bool BunnyMark::init()
 		ss << "Rabbits: " << result;
 		resultLabel->setString(ss.str());
 	};
-
 	// add Click event to listener
 	_eventDispatcher->addEventListenerWithFixedPriority(_mouseListener, 1);
+#endif
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+	increase = 10;
+	// setting Touch listener
+	auto _touchListener = EventListenerTouchOneByOne::create();
+	_touchListener->onTouchBegan = [](cocos2d::Touch* touch, cocos2d::Event* event) {
+		return true;
+	};
+
+	_touchListener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+		this->addRabbits();
+		std::stringstream ss;
+		ss << "Rabbits: " << count;
+		score->setString(ss.str());
+	};
+	// add Touch event to listener
+	_eventDispatcher->addEventListenerWithFixedPriority(_touchListener, 1);
+#endif
+	
 	// it enables update function
 	this->scheduleUpdate();
     
@@ -98,8 +119,8 @@ void BunnyMark::update(float delta) {
 }
 
 void BunnyMark::addRabbits() {
-	result += 25;
-	for (int i = 0; i < 25; i++) {
+	result += increase;
+	for (int i = 0; i < increase; i++) {
 		// create a new structure object
 		// and adding properties
 		RabbitObj rabbitObj;

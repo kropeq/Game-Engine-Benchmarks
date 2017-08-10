@@ -11,16 +11,17 @@ Scene* BunnyMark::createScene()
 // on "init" you need to initialize your instance
 bool BunnyMark::init()
 {
-    //////////////////////////////
-    // 1. super init first
+    // super init first
     if ( !Scene::init() )
     {
         return false;
     }
-    // getting the visible screen size
+    
+	// getting the visible screen size
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    // 2. add a menu item with "X" image, which is clicked to quit the program.
+    
+	// add a menu item with "X" image, which is clicked to quit the program.
     // add a "close" icon to exit the progress. it's an autorelease object
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
@@ -35,46 +36,41 @@ bool BunnyMark::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    // add a label shows "Hello World"
     // create and initialize a label
     auto label = Label::createWithTTF("BunnyMark v1.0", "fonts/Marker Felt.ttf", 24);
 	auto resultLabel = Label::createWithTTF("Rabbits: 0", "fonts/Marker Felt.ttf", 24);
-    // position the label on the center of the screen
+    
+	// position the label on the center of the screen
     label->setPosition(Vec2(origin.x + visibleSize.width/2,origin.y + visibleSize.height - label->getContentSize().height));
 	resultLabel->setPosition(Vec2(origin.x + 80,origin.y + visibleSize.height - resultLabel->getContentSize().height));
-    // add the label as a child to this layer
+    
+	// add the label as a child to this layer
 	this->addChild(resultLabel, 1);
     this->addChild(label, 1);
-    // create Rabbit sprite
-	RabbitObj rabbitObj;
-	rabbitObj.rabbit = Sprite::create("wabbit_alpha.png");
+    
+	// create Rabbit sprite
+	rabbit = Sprite::create("wabbit_alpha.png");
+	
 	// getting size of this sprite
-	rabbit_width = rabbitObj.rabbit->getContentSize().width / 2;
-	rabbit_height = rabbitObj.rabbit->getContentSize().height / 3;
+	rabbit_width = rabbit->getContentSize().width / 2;
+	rabbit_height = rabbit->getContentSize().height / 3;
+	
 	// checking the edges of the screen
 	minX = (int)rabbit_width + 1;
 	maxX = (int)(visibleSize.width - rabbit_width) - 1;
 	minY = (int)rabbit_height + 1;
 	maxY = (int)(visibleSize.height - rabbit_height) - 1;
-	// getting random start position of sprite
-	int positionX = RandomHelper::random_int(minX, maxX);
-	int positionY = RandomHelper::random_int(minY, maxY);
-	// setting random start position to sprite
-	rabbitObj.rabbit->setPosition(Vec2(positionX, positionY));
-	rabbitObj.direction = 1;
-    // add the sprite as a child to this layer
-    this->addChild(rabbitObj.rabbit, 0);
-	rabbits.push_back(rabbitObj);
+	
 	// setting CLICK listener
 	auto _mouseListener = EventListenerMouse::create();
 	_mouseListener->onMouseDown = [=](cocos2d::Event* event) {
-		result += 25;
+		this->addRabbits();
 		std::stringstream ss;
 		ss << "Rabbits: " << result;
 		resultLabel->setString(ss.str());
-		
 	};
 
+	// add Click event to listener
 	_eventDispatcher->addEventListenerWithFixedPriority(_mouseListener, 1);
 
 	// it enables update function
@@ -89,15 +85,35 @@ void BunnyMark::update(float delta) {
 	for (it = rabbits.begin(); it != rabbits.end(); it++) {
 		auto position = it->rabbit->getPosition();
 		position.y -= 5 * it->direction;
-		if (position.y < 10) {
+		if (position.y < minY) {
 			it->direction = -1;
-			position.y = 10;
+			position.y = minY;
 		}
-		if (position.y > 590) {
+		if (position.y > maxY) {
 			it->direction = 1;
-			position.y = 590;
+			position.y = maxY;
 		}
 		it->rabbit->setPosition(position);
+	}
+}
+
+void BunnyMark::addRabbits() {
+	result += 25;
+	for (int i = 0; i < 25; i++) {
+		// create a new structure object
+		// and adding properties
+		RabbitObj rabbitObj;
+		rabbitObj.rabbit = Sprite::create("wabbit_alpha.png");
+		// getting random start position for this sprite
+		int positionX = RandomHelper::random_int(minX, maxX);
+		int positionY = RandomHelper::random_int(minY, maxY);
+		// setting random start position for this sprite
+		rabbitObj.rabbit->setPosition(Vec2(positionX, positionY));
+		rabbitObj.direction = 1;
+		// add this sprite to the scene
+		this->addChild(rabbitObj.rabbit, 0);
+		// add this structure to list
+		rabbits.push_back(rabbitObj);
 	}
 }
 

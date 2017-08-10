@@ -16,6 +16,7 @@ public:
     static cocos2d::Scene* createScene();
 
     virtual bool init();
+	void addRabbits();
 
 	std::list<RabbitObj> rabbits;
 
@@ -27,7 +28,7 @@ public:
 
 	void update(float) override;
     
-	//cocos2d::Sprite* rabbit;
+	cocos2d::Sprite* rabbit;
 
 	float rabbit_width, rabbit_height;
 	int minX, maxX, minY, maxY;

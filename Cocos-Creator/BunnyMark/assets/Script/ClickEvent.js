@@ -3,10 +3,10 @@ cc.Class({
     
     // variables of this class
     properties: {
-        // enabling and disabling adding new sprites
-        add: false,
         // current number of rabbits in the scene
         numberOfRabbits: 0,
+        // stores all rabbits
+        list: [],
         // prefab which will be instantiating
         rabbitPrefab: cc.Prefab,
         // node that contains all of the rabbit sprites
@@ -36,29 +36,40 @@ cc.Class({
                 return true;
             },
             onTouchEnded: function(touch,event){
-                self.add = true;
+                // increase result by 25
+                self.numberOfRabbits += 25;
+                var node;
+                // update the UI Text with new result
+                self.resultLabel.string = "Rabbits: " + self.numberOfRabbits;
+                // add the next rabbits
+                for(var i=0; i<25; i++){
+                     // cloning prefab
+                    node = cc.instantiate(self.rabbitPrefab);
+                    // random position of the sprite
+                    node.x = Math.floor((Math.random()* 740 ) + 30 );
+                    node.y = Math.floor((Math.random()* 560 ) + 10 );
+                    // adding to the parent folder
+                    node.parent = self.parentNode;
+                    // adding to list
+                    self.list.push({direction: 1, rabbit: node});
+                }
             }
         },this.node);
     },
 
-    // called every frame, uncomment this function to activate update callback
+    // called every frame
     update: function (dt) {
-        // if user click the screen
-        if(this.add){
-            // increase result by 25
-            this.numberOfRabbits += 25;
-            var node;
-            // update the UI Text with new result
-            this.resultLabel.string = "Rabbits: " + this.numberOfRabbits;
-            // add the next rabbits
-            for(var i=0; i<25; i++){
-                // cloning prefab
-                node = cc.instantiate(this.rabbitPrefab);
-                // adding to the parent folder
-                node.parent = this.parentNode;
+        // lets update x and y position of all bunnies
+        this.list.forEach(function(entry){
+            entry.rabbit.y -= 5*entry.direction;
+            if(entry.rabbit.y < 20 ){
+                entry.direction = -1;
+                entry.rabbit.y = 20;
             }
-            // disable adding rabbits
-            this.add = false;
-        }
+            if(entry.rabbit.y > 580 ){
+                entry.direction = 1;
+                entry.rabbit.y = 580;
+            }
+        })
     },
 });

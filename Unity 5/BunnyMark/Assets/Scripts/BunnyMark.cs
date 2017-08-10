@@ -89,34 +89,38 @@ public class BunnyMark : MonoBehaviour {
 		// update text of result on the GUI
 		text.text = "Rabbits: " + result;
 	}
+
+	// update the position of this sprite and direction of moving
+	private RabbitObj updateRabbit(GameObject _temp, int _direction){
+		// update the position of this sprite
+		_temp.transform.position = new Vector2(_temp.transform.position.x, _temp.transform.position.y - 0.07f * _direction);
+		// change direction of moving if it goes too far
+		if (_temp.transform.position.y < -size) {
+			_direction = -1;
+			_temp.transform.position = new Vector2 (_temp.transform.position.x, -size);
+		}
+		if (_temp.transform.position.y > size) {
+			_direction = 1;
+			_temp.transform.position = new Vector2 (_temp.transform.position.x, size);
+		}
+		// create new struct object
+		RabbitObj ro = new RabbitObj ();
+		ro.SetRabbit (_temp);
+		ro.SetDirection (_direction);
+		// return all structure
+		return ro;
+	}
 	
 	// Update is called once per frame
 	void Update () {
 		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 		// loop through all of the rabbits in the list
 		for (int i = 0; i < rabbits.Count; i++) {
-			// get properties of this sprite
-			GameObject temp = rabbits [i].GetRabbit ();
-			int direction = rabbits [i].GetDirection ();
-			// update the position of this sprite
-			temp.transform.position = new Vector2(temp.transform.position.x, temp.transform.position.y - 0.07f * (rabbits[i].GetDirection()));
-			// change direction of moving if it goes too far
-			if (temp.transform.position.y < -size) {
-				direction = -1;
-				temp.transform.position = new Vector2 (temp.transform.position.x, -size);
-			}
-			if (temp.transform.position.y > size) {
-				direction = 1;
-				temp.transform.position = new Vector2 (temp.transform.position.x, size);
-			}
-			// create new struct object
-			RabbitObj ro = new RabbitObj ();
-			ro.SetRabbit (temp);
-			ro.SetDirection (direction);
 			// you must to replace all structure, not just variable
 			// because it changes only a copy of structure
 			// not the original one
-			rabbits [i] = ro;
+			rabbits [i] = updateRabbit (rabbits [i].GetRabbit (),
+										rabbits [i].GetDirection () );
 		}
 	}
 

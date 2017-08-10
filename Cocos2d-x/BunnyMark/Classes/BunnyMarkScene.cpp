@@ -38,18 +38,19 @@ bool BunnyMark::init()
     // add a label shows "Hello World"
     // create and initialize a label
     auto label = Label::createWithTTF("BunnyMark v1.0", "fonts/Marker Felt.ttf", 24);
-	auto result = Label::createWithTTF("Rabbits: 0", "fonts/Marker Felt.ttf", 24);
+	auto resultLabel = Label::createWithTTF("Rabbits: 0", "fonts/Marker Felt.ttf", 24);
     // position the label on the center of the screen
     label->setPosition(Vec2(origin.x + visibleSize.width/2,origin.y + visibleSize.height - label->getContentSize().height));
-	result->setPosition(Vec2(origin.x + 80,origin.y + visibleSize.height - result->getContentSize().height));
+	resultLabel->setPosition(Vec2(origin.x + 80,origin.y + visibleSize.height - resultLabel->getContentSize().height));
     // add the label as a child to this layer
-	this->addChild(result, 1);
+	this->addChild(resultLabel, 1);
     this->addChild(label, 1);
     // create Rabbit sprite
-    rabbit = Sprite::create("wabbit_alpha.png");
+	RabbitObj rabbitObj;
+	rabbitObj.rabbit = Sprite::create("wabbit_alpha.png");
 	// getting size of this sprite
-	rabbit_width = rabbit->getContentSize().width / 2;
-	rabbit_height = rabbit->getContentSize().height / 3;
+	rabbit_width = rabbitObj.rabbit->getContentSize().width / 2;
+	rabbit_height = rabbitObj.rabbit->getContentSize().height / 3;
 	// checking the edges of the screen
 	minX = (int)rabbit_width + 1;
 	maxX = (int)(visibleSize.width - rabbit_width) - 1;
@@ -59,9 +60,23 @@ bool BunnyMark::init()
 	int positionX = RandomHelper::random_int(minX, maxX);
 	int positionY = RandomHelper::random_int(minY, maxY);
 	// setting random start position to sprite
-	rabbit->setPosition(Vec2(positionX, positionY));
+	rabbitObj.rabbit->setPosition(Vec2(positionX, positionY));
+	rabbitObj.direction = 1;
     // add the sprite as a child to this layer
-    this->addChild(rabbit, 0);
+    this->addChild(rabbitObj.rabbit, 0);
+	rabbits.push_back(rabbitObj);
+	// setting CLICK listener
+	auto _mouseListener = EventListenerMouse::create();
+	_mouseListener->onMouseDown = [=](cocos2d::Event* event) {
+		result += 25;
+		std::stringstream ss;
+		ss << "Rabbits: " << result;
+		resultLabel->setString(ss.str());
+		
+	};
+
+	_eventDispatcher->addEventListenerWithFixedPriority(_mouseListener, 1);
+
 	// it enables update function
 	this->scheduleUpdate();
     
@@ -69,17 +84,21 @@ bool BunnyMark::init()
 }
 
 void BunnyMark::update(float delta) {
-	auto position = rabbit->getPosition();
-	position.y -= 5 * direction;
-	if (position.y < 10) {
-		direction = -1;
-		position.y = 10;
+
+	std::list<RabbitObj>::iterator it;
+	for (it = rabbits.begin(); it != rabbits.end(); it++) {
+		auto position = it->rabbit->getPosition();
+		position.y -= 5 * it->direction;
+		if (position.y < 10) {
+			it->direction = -1;
+			position.y = 10;
+		}
+		if (position.y > 590) {
+			it->direction = 1;
+			position.y = 590;
+		}
+		it->rabbit->setPosition(position);
 	}
-	if (position.y > 590) {
-		direction = 1;
-		position.y = 590;
-	}
-	rabbit->setPosition(position);
 }
 
 void BunnyMark::menuCloseCallback(Ref* pSender)

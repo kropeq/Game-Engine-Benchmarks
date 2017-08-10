@@ -27,12 +27,12 @@ public:
 
 	void update(float) override;
     
-	cocos2d::Sprite* rabbit;
+	//cocos2d::Sprite* rabbit;
 
 	float rabbit_width, rabbit_height;
 	int minX, maxX, minY, maxY;
 
-	int direction = 1;
+	int result = 0;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

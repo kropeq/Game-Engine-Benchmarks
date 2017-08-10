@@ -17,7 +17,7 @@ bool BunnyMark::init()
     {
         return false;
     }
-    
+    // getting the visible screen size
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     // 2. add a menu item with "X" image, which is clicked to quit the program.
@@ -40,23 +40,29 @@ bool BunnyMark::init()
     auto label = Label::createWithTTF("BunnyMark v1.0", "fonts/Marker Felt.ttf", 24);
 	auto result = Label::createWithTTF("Rabbits: 0", "fonts/Marker Felt.ttf", 24);
     // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-	result->setPosition(Vec2(origin.x + 80,
-		origin.y + visibleSize.height - result->getContentSize().height));
+    label->setPosition(Vec2(origin.x + visibleSize.width/2,origin.y + visibleSize.height - label->getContentSize().height));
+	result->setPosition(Vec2(origin.x + 80,origin.y + visibleSize.height - result->getContentSize().height));
     // add the label as a child to this layer
 	this->addChild(result, 1);
     this->addChild(label, 1);
-
     // create Rabbit sprite
     rabbit = Sprite::create("wabbit_alpha.png");
-
-    // position the sprite on the center of the screen
-    rabbit->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-	CCLOG("TEEEEST\n");
+	// getting size of this sprite
+	rabbit_width = rabbit->getContentSize().width / 2;
+	rabbit_height = rabbit->getContentSize().height / 3;
+	// checking the edges of the screen
+	minX = (int)rabbit_width + 1;
+	maxX = (int)(visibleSize.width - rabbit_width) - 1;
+	minY = (int)rabbit_height + 1;
+	maxY = (int)(visibleSize.height - rabbit_height) - 1;
+	// getting random start position of sprite
+	int positionX = RandomHelper::random_int(minX, maxX);
+	int positionY = RandomHelper::random_int(minY, maxY);
+	// setting random start position to sprite
+	rabbit->setPosition(Vec2(positionX, positionY));
     // add the sprite as a child to this layer
     this->addChild(rabbit, 0);
-
+	// it enables update function
 	this->scheduleUpdate();
     
     return true;

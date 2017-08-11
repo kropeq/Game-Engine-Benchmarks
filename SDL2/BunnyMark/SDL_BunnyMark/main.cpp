@@ -10,6 +10,8 @@
 #include <string>
 // required to vectors
 #include <vector>
+// required to srand(time(NULL))
+#include <ctime>
 
 using namespace std;
 
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
 	imageSurface = IMG_Load("Resources/wabbit_alpha.png");
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
+	srand(time(NULL));
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
@@ -154,14 +157,30 @@ int main(int argc, char *argv[])
 						SDL_DestroyTexture(resultTexture);
 						SDL_DestroyTexture(fpsTexture);
 						break;
+					// allows finish working the app by q or ESC
+					case SDL_KEYUP:
+						switch (event.key.keysym.sym)
+						{
+						case SDLK_q:
+							quit = true;
+							SDL_DestroyTexture(resultTexture);
+							SDL_DestroyTexture(fpsTexture);
+							break;
+						case SDLK_ESCAPE:
+							quit = true;
+							SDL_DestroyTexture(resultTexture);
+							SDL_DestroyTexture(fpsTexture);
+							break;
+						}
+						break;
 					// allows add the next rabbits by clicking
 					case SDL_MOUSEBUTTONUP:
 						if (event.button.button == SDL_BUTTON_LEFT) {
 							rabbitCounter += 50;
 							for (int i = 0; i < 50; i++) {
 								RabbitObj rabbitObj;
-								int positionX = i * 15 + 10;
-								int positionY = 200;
+								int positionX = (std::rand() % 780);
+								int positionY = (std::rand() % 570);
 								rabbitObj.offsetRabbit.x = positionX;
 								rabbitObj.offsetRabbit.y = positionY;
 								rabbitObj.offsetRabbit.w = 20;

@@ -14,6 +14,28 @@ using namespace std;
 // setting rendering speed to 60 fps
 const int FRAMES_PER_SECOND = 60;
 
+SDL_Window *window = nullptr;
+// surface for image
+SDL_Surface *imageSurface = nullptr;
+SDL_Renderer *renderer;
+TTF_Font *font;
+
+void closeSubsystems() {
+	TTF_CloseFont(font);
+
+	// Destroy renderer
+	SDL_DestroyRenderer(renderer);
+
+	// Destroy window
+	SDL_DestroyWindow(window);
+	window = NULL;
+
+	// Quit SDL subsystems
+	IMG_Quit();
+	TTF_Quit();
+	SDL_Quit();
+}
+
 int main(int argc, char *argv[])
 {
 	// time of frame
@@ -37,11 +59,6 @@ int main(int argc, char *argv[])
 
 	// stores events
 	SDL_Event event;
-	SDL_Window *window = nullptr;
-	// surface for image
-	SDL_Surface *imageSurface = nullptr;
-	SDL_Renderer *renderer;
-	TTF_Font *font;
 
 	// Initialising
 	imageSurface = IMG_Load("Resources/wabbit_alpha.png");
@@ -166,17 +183,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	TTF_CloseFont(font);
-	// Destroy renderer
-	SDL_DestroyRenderer(renderer);
-
-	// Destroy window
-	SDL_DestroyWindow(window);
-	window = NULL;
-
-	// Quit SDL subsystems
-	IMG_Quit();
-	TTF_Quit();
-	SDL_Quit();
+	closeSubsystems();
 	return 0;
 }

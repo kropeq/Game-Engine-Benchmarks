@@ -8,6 +8,8 @@
 #include <iostream>
 // required to std::to_string()
 #include <string>
+// required to vectors
+#include <vector>
 
 using namespace std;
 
@@ -19,6 +21,13 @@ SDL_Window *window = nullptr;
 SDL_Surface *imageSurface = nullptr;
 SDL_Renderer *renderer;
 TTF_Font *font;
+
+struct RabbitObj {
+	int direction;
+	SDL_Rect offsetRabbit;
+};
+
+vector<RabbitObj> rabbits;
 
 void closeSubsystems() {
 	TTF_CloseFont(font);
@@ -53,6 +62,9 @@ int main(int argc, char *argv[])
 
 	// counter of frames per second
 	int frameCounter = 0;
+
+	// counts the number of rabbits in scene
+	int rabbitCounter = 0;
 
 	// while is false, app will update in 60 FPS
 	bool quit = false;
@@ -106,11 +118,7 @@ int main(int argc, char *argv[])
 			SDL_FreeSurface(resultSurface);
 			SDL_FreeSurface(fpsSurface);
 			SDL_FreeSurface(imageSurface);
-			// sets rect of displaying image
-			SDL_Rect rect = { 390,290,20,32 };
-			// sets direction of moving image
-			int direction = 1;
-			int rabbits = 0;
+
 			// update loop
 			while (!quit)
 			{
@@ -130,10 +138,6 @@ int main(int argc, char *argv[])
 					fpsSurface = TTF_RenderText_Solid(font, result.c_str(), color);
 					fpsTexture = SDL_CreateTextureFromSurface(renderer, fpsSurface);
 					// free memory
-					result = "Rabbits: " + std::to_string(rabbits);
-					resultSurface = TTF_RenderText_Solid(font, result.c_str(), color);
-					resultTexture = SDL_CreateTextureFromSurface(renderer, resultSurface);
-					SDL_FreeSurface(resultSurface);
 					SDL_FreeSurface(fpsSurface);
 					// reset counters
 					frameTime = 0;
@@ -150,22 +154,51 @@ int main(int argc, char *argv[])
 						SDL_DestroyTexture(resultTexture);
 						SDL_DestroyTexture(fpsTexture);
 						break;
+					// allows add the next rabbits by clicking
+					case SDL_MOUSEBUTTONUP:
+						if (event.button.button == SDL_BUTTON_LEFT) {
+							rabbitCounter += 50;
+							for (int i = 0; i < 50; i++) {
+								RabbitObj rabbitObj;
+								int positionX = i * 15 + 10;
+								int positionY = 200;
+								rabbitObj.offsetRabbit.x = positionX;
+								rabbitObj.offsetRabbit.y = positionY;
+								rabbitObj.offsetRabbit.w = 20;
+								rabbitObj.offsetRabbit.h = 32;
+								rabbitObj.direction = 1;
+								rabbits.push_back(rabbitObj);
+							}
+							std::string result;
+							result = "Rabbits: " + std::to_string(rabbitCounter);
+							resultSurface = TTF_RenderText_Solid(font, result.c_str(), color);
+							resultTexture = SDL_CreateTextureFromSurface(renderer, resultSurface);
+							SDL_FreeSurface(resultSurface);
+						}
+						break;
+					default:
+						break;
 					}
-				}
-				// update the position of image
-				rect.y += 5 * direction;
-				if (rect.y <= 0) {
-					rect.y = 0;
-					direction = 1;
-				}
-				if (rect.y >= 570) {
-					rect.y = 570;
-					direction = -1;
 				}
 				// clear previous rendered scene
 				SDL_RenderClear(renderer);
-				// put texture into renderer
-				SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+				// update the position of images
+				for (RabbitObj &rabbitObj : rabbits) {
+					rabbitObj.offsetRabbit.y += 5 * rabbitObj.direction;
+					if (rabbitObj.offsetRabbit.y <= 0)
+					{
+						rabbitObj.offsetRabbit.y = 0;
+						rabbitObj.direction *= (-1);
+					}
+					if (rabbitObj.offsetRabbit.y >= 570)
+					{
+						rabbitObj.offsetRabbit.y = 570;
+						rabbitObj.direction *= (-1);
+					}
+					SDL_RenderCopy(renderer, texture, NULL, &rabbitObj.offsetRabbit);
+				}
+				
 				// delaying time to catch 60 fps tacting
 				thisFrameTime = (SDL_GetTicks() - currentTime);
 				// if frame lasts shorter than 16,66ms then delay the rest of time

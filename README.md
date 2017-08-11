@@ -32,14 +32,18 @@ PhysicsMark test polega na replikowaniu obrazków i zrzucaniu ich do pudełka, t
 |Karta graficzna|NVIDIA GeForce GTX 275|Pamięć|896 MB|
 |Pamięć RAM|4 GB(3.25GB dostępne)|||
 
-##### BunnyMark - 60 FPS 
+##### BunnyMark
 
 |Narzędzie|Wynik(60FPS)|Narzędzie|Wynik(50FPS)|
 |---------|------------|---------|------------|
 |**SDL2**|*19 200*|**SDL2**|*23 100*|
 |**Cocos2d-x**|*8 400*|**Cocos2d-x**|*9 300*|
 |**Unity 5**|*5 200*|**Unity 5**|*6 500*|
-|**Cocos Creator**|TODO|**Cocos Creator**|TODO|
+|**Cocos Creator**|*TODO*|**Cocos Creator**|*TODO*|
+
+##### PhysicsMark
+
+TODO
 
 #### Smartfon Sony Xperia M2 D2303
 |Element|Specyfikacja||Wartość|
@@ -48,6 +52,10 @@ PhysicsMark test polega na replikowaniu obrazków i zrzucaniu ich do pudełka, t
 |Procesor|Qualcomm Snapdragon 400 MSM8926 @ 1,2GHz|Rdzenie|4|
 |Karta graficzna|Qualcomm Adreno (TM) 305|Zegar rdzenia|450 MHz|
 |Pamięć RAM|864 MB|||
+
+##### PhysicsMark
+
+TODO
 
 ##### BunnyMark
 

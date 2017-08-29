@@ -3,11 +3,16 @@ using System.Collections;
 
 public class PhysicsMark : MonoBehaviour {
 
+	float deltaTime = 0.0f;
 	float cameraSize = 0.0f;
 	float height,width,ratio,widthForBunnies;
 
+	GameObject rabbit;
+
 	// Use this for initialization
 	void Start () {
+		rabbit = Resources.Load<GameObject> ("wabbit_alpha");
+
 		height = Screen.height;
 		width = Screen.width;
 		ratio = width / height;
@@ -23,7 +28,7 @@ public class PhysicsMark : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 	}
 
 	// create colliders for bunnies to not go outside the view of camera
@@ -101,4 +106,21 @@ public class PhysicsMark : MonoBehaviour {
 		BoxCollider2D collDown = objDown.AddComponent (typeof(BoxCollider2D)) as BoxCollider2D;
 		BoxCollider2D collUp = objUp.AddComponent (typeof(BoxCollider2D)) as BoxCollider2D;
 	}
+
+	void OnGUI()
+	{
+		int w = Screen.width, h = Screen.height;
+
+		GUIStyle style = new GUIStyle();
+
+		Rect rect = new Rect(0, 0, w, h * 2 / 100);
+		style.alignment = TextAnchor.UpperLeft;
+		style.fontSize = h * 2 / 40;
+		style.normal.textColor = new Color (0.0f, 0.0f, 0.5f, 1.0f);
+		float msec = deltaTime * 1000.0f;
+		float fps = 1.0f / deltaTime;
+		string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+		GUI.Label(rect, text		, style);
+	}
+
 }

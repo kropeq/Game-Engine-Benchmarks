@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PhysicsMark : MonoBehaviour {
 
 	float deltaTime = 0.0f;
 	float cameraSize = 0.0f;
-	float height,width,ratio,widthForBunnies;
+	float height,width,ratio,widthForBunnies,range;
+	int score = 0;
 
-	GameObject rabbit;
+	GameObject rabbit,bunny;
+	Text text;
 
 	// Use this for initialization
 	void Start () {
-		rabbit = Resources.Load<GameObject> ("wabbit_alpha");
+		rabbit = Resources.Load<GameObject> ("Prefabs/wabbit_alpha");
+		text = GameObject.Find ("Score").GetComponent<Text> ();
 
 		height = Screen.height;
 		width = Screen.width;
@@ -29,6 +33,18 @@ public class PhysicsMark : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+	}
+
+	public void addRabbits(){
+
+		range = widthForBunnies / 26;
+		for (int i = 0; i < 25; i++) {
+			bunny = Instantiate (rabbit);
+			bunny.transform.position = new Vector2(((-widthForBunnies/2)+(i+1)*range),4.45f);
+		}
+
+		score += 25;
+		text.text = "Rabbits: " + score;
 	}
 
 	// create colliders for bunnies to not go outside the view of camera

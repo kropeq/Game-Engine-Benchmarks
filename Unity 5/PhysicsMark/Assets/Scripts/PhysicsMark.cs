@@ -8,6 +8,7 @@ public class PhysicsMark : MonoBehaviour {
 	float cameraSize = 0.0f;
 	float height,width,ratio,widthForBunnies,range;
 	int score = 0;
+	int increase = 25;
 
 	GameObject rabbit,bunny;
 	Text text;
@@ -35,15 +36,27 @@ public class PhysicsMark : MonoBehaviour {
 		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 	}
 
+	// click event for every place of screen
 	public void addRabbits(){
-
+		// if this app runs on Windows, Mac OS or Linux platform
+		#if UNITY_STANDALONE
+		increase = 25;
 		range = widthForBunnies / 26;
-		for (int i = 0; i < 25; i++) {
+		for (int i = 0; i < increase; i++) {
 			bunny = Instantiate (rabbit);
 			bunny.transform.position = new Vector2(((-widthForBunnies/2)+(i+1)*range),4.45f);
 		}
-
-		score += 25;
+		// if this app runs on device with Android
+		#elif UNITY_ANDROID
+		increase = 10;
+		range = widthForBunnies / 11;
+		for (int i = 0; i < increase; i++) {
+		bunny = Instantiate (rabbit);
+		bunny.transform.position = new Vector2(((-widthForBunnies/2)+(i+1)*range),4.45f);
+		//bunny.transform.position = new Vector2(Random.Range(-ratio,ratio),Random.Range(3.85f,4.85f));
+		}
+		#endif
+		score += increase;
 		text.text = "Rabbits: " + score;
 	}
 

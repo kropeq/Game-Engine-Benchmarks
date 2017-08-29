@@ -41,7 +41,17 @@ public class PhysicsMark : MonoBehaviour {
 		averageText = GameObject.Find ("Average").GetComponent<Text> ();
 		maximumText = GameObject.Find ("Maximum").GetComponent<Text> ();
 		testButton = GameObject.Find ("Button").GetComponent<Button> ();
+		countScreenRatio ();
+		createWalls ();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+	}
 
+	// check resolution ratio for different type of devices
+	void countScreenRatio(){
 		height = Screen.height;
 		width = Screen.width;
 		ratio = width / height;
@@ -51,13 +61,6 @@ public class PhysicsMark : MonoBehaviour {
 
 		// set width for putting clones of Bunny Sprite
 		widthForBunnies = ratio * cameraSize * 2.0f;
-
-		createWalls ();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 	}
 
 	// click event for every place of screen

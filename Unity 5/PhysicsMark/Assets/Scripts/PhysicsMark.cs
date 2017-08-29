@@ -1,22 +1,40 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+// required to StopWatch
+using System.Diagnostics;
+// required to TimeSpan
+using System;
+// required to fpsy.Sum()
+using System.Linq;
 
 public class PhysicsMark : MonoBehaviour {
 
+	Stopwatch stopWatch;
+	TimeSpan ts;
+
+	bool countResult = false;
 	float deltaTime = 0.0f;
 	float cameraSize = 0.0f;
+	float average = 0.0f;
 	float height,width,ratio,widthForBunnies,range;
 	int score = 0;
 	int increase = 25;
 
 	GameObject rabbit,bunny;
 	Text text;
+	Button testButton;
+	// array that keeps fps of every frame when test button is clicked
+	// used to count the fps average
+	private float[] fpsy = new float[10000];
+	// frame counter
+	private int i = 0;
 
 	// Use this for initialization
 	void Start () {
 		rabbit = Resources.Load<GameObject> ("Prefabs/wabbit_alpha");
 		text = GameObject.Find ("Score").GetComponent<Text> ();
+		testButton = GameObject.Find ("Button").GetComponent<Button> ();
 
 		height = Screen.height;
 		width = Screen.width;
@@ -35,7 +53,7 @@ public class PhysicsMark : MonoBehaviour {
 	void Update () {
 		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 	}
-
+		
 	// click event for every place of screen
 	public void addRabbits(){
 		// if this app runs on Windows, Mac OS or Linux platform
@@ -136,6 +154,19 @@ public class PhysicsMark : MonoBehaviour {
 		BoxCollider2D collUp = objUp.AddComponent (typeof(BoxCollider2D)) as BoxCollider2D;
 	}
 
+	// click event for test button
+	public void onClick(){
+		// run the test
+		countResult = true;
+
+		// start the timer
+		stopWatch = new Stopwatch ();
+		stopWatch.Start ();
+
+		// deactivate the button
+		testButton.interactable = false;
+	}
+
 	void OnGUI()
 	{
 		int w = Screen.width, h = Screen.height;
@@ -148,8 +179,48 @@ public class PhysicsMark : MonoBehaviour {
 		style.normal.textColor = new Color (0.0f, 0.0f, 0.5f, 1.0f);
 		float msec = deltaTime * 1000.0f;
 		float fps = 1.0f / deltaTime;
+		if (countResult) {
+			startMeasurement (fps);
+		}
 		string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
 		GUI.Label(rect, text		, style);
+	}
+
+	// this is active when user will push a test button
+	void startMeasurement(float fps){
+		// check elapsed seconds
+		ts = stopWatch.Elapsed;
+		// test lasts 5 seconds
+		if (ts.Seconds > 5) {
+			// break counting the result
+			countResult = false;
+
+			// count the final average result
+			average = (fpsy.Sum ()) / i;
+
+			// stop and reset the timer
+			stopWatch.Stop ();
+			stopWatch.Reset ();
+
+			// print the result
+			print(average);
+
+			// reset value of variables for the next click event
+			for (int index = i; index >= 0; index--) {
+				fpsy [index] = 0.0f;
+			}
+			i = 0;
+			average = 0;
+
+			// activate button again
+			testButton.interactable = true;
+		} else {
+			// save current fps of the frame
+			fpsy [i] = fps;
+
+			// increase frame counter
+			i++;
+		}
 	}
 
 }

@@ -16,14 +16,17 @@ public class PhysicsMark : MonoBehaviour {
 	bool countResult = false;
 	float deltaTime = 0.0f;
 	float cameraSize = 0.0f;
+	float minimum = 100.0f;
 	float average = 0.0f;
+	float maximum = 0.0f;
 	float height,width,ratio,widthForBunnies,range;
 	int score = 0;
 	int increase = 25;
 
 	GameObject rabbit,bunny;
-	Text text;
+	Text text, averageText, minimumText, maximumText;
 	Button testButton;
+
 	// array that keeps fps of every frame when test button is clicked
 	// used to count the fps average
 	private float[] fpsy = new float[10000];
@@ -34,6 +37,9 @@ public class PhysicsMark : MonoBehaviour {
 	void Start () {
 		rabbit = Resources.Load<GameObject> ("Prefabs/wabbit_alpha");
 		text = GameObject.Find ("Score").GetComponent<Text> ();
+		minimumText = GameObject.Find ("Minimum").GetComponent<Text> ();
+		averageText = GameObject.Find ("Average").GetComponent<Text> ();
+		maximumText = GameObject.Find ("Maximum").GetComponent<Text> ();
 		testButton = GameObject.Find ("Button").GetComponent<Button> ();
 
 		height = Screen.height;
@@ -53,7 +59,7 @@ public class PhysicsMark : MonoBehaviour {
 	void Update () {
 		deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 	}
-		
+
 	// click event for every place of screen
 	public void addRabbits(){
 		// if this app runs on Windows, Mac OS or Linux platform
@@ -202,21 +208,35 @@ public class PhysicsMark : MonoBehaviour {
 			stopWatch.Stop ();
 			stopWatch.Reset ();
 
-			// print the result
-			print(average);
+			// print the results
+			minimumText.text = string.Format ("Minimum: {0:0.000}", minimum);
+			averageText.text = string.Format ("Average: {0:0.000}", average);
+			maximumText.text = string.Format ("Maximum: {0:0.000}", maximum);
 
 			// reset value of variables for the next click event
 			for (int index = i; index >= 0; index--) {
 				fpsy [index] = 0.0f;
 			}
 			i = 0;
-			average = 0;
+			minimum = 100.0f;
+			average = 0.0f;
+			maximum = 0.0f;
 
 			// activate button again
 			testButton.interactable = true;
 		} else {
 			// save current fps of the frame
 			fpsy [i] = fps;
+
+			// check if current fps was lower than minimum
+			if (fps < minimum) {
+				minimum = fps;
+			}
+
+			// check if current fps was higher than maximum
+			if (fps > maximum) {
+				maximum = fps;
+			}
 
 			// increase frame counter
 			i++;
